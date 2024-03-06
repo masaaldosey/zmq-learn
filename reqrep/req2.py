@@ -9,6 +9,6 @@ socket.connect("tcp://localhost:6001")
 
 while True:
     sleep(0.2)
-    socket.send(b"Hello")
+    socket.send(b"Hello_SERVER")
     response = socket.recv().decode("utf-8")
     print(f"{datetime.now()} | {response}")
