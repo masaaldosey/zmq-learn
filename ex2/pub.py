@@ -32,7 +32,7 @@ while True:
     metadata = struct.pack('<IIIId', rows, cols, nchannels, data_type, timestamp)  # lazyman serialization. Use protobuf, msgpack or rapidjson for production
     
     ###### TRY copy and no copy. TRY track and no track (careful of False and False)
-    tracker = socket.send_multipart([metadata, bytesStream], copy=False, track=False)
+    tracker = socket.send_multipart([metadata, bytesStream], copy=True, track=False)
     if tracker is not None:
         tracker.wait()
     new = time.time()
