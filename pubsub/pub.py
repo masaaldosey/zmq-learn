@@ -1,14 +1,18 @@
 import zmq
 import cv2
-from datetime import datetime
+import numpy as np
+import time
+import struct
 
 context = zmq.Context()
 
 socket = context.socket(zmq.PUB)
-socket.connect("tcp://localhost:6001")
+socket.bind("ipc://@camera")
 
-image = cv2.imread("test.jpg", cv2.IMREAD_UNCHANGED)
+image = cv2.imread("test.jpg", cv2.IMREAD_UNCHANGED).tobytes()
+dummy = np.zeros((11608, 8708, 3), "uint8").tobytes()
 
 while True:
-    socket.send(image.tobytes())
-    print(f"{datetime.now()} | Published image")
+    timepart = struct.pack('<d', time.time())
+    socket.send_multipart([timepart, dummy], copy=False, track=False)
+    print("===Published image===")

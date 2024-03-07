@@ -1,26 +1,47 @@
 #include <zmq.hpp>
-#include <iostream>
 #include <opencv2/opencv.hpp>
+#include <iostream>
+#include <chrono>
 
 // receive image from publisher
-void sub()
-{
-    zmq::context_t context(1);
-    zmq::socket_t socket(context, ZMQ_SUB);
-    socket.connect("tcp://localhost:5555");
-    socket.setsockopt(ZMQ_SUBSCRIBE, "", 0);
-
-    cv::Mat img;
-    zmq::message_t message;
-    while (true)
-    {
-        socket.recv(&message);
-        std::string data = std::string(static_cast<char *>(message.data()), message.size());
-        img = cv::imdecode(cv::Mat(data), 1);
-        cv::imshow("sub", img);
-        cv::waitKey(1);
-    }
-}
 int main()
 {
+    zmq::context_t context(1);
+    zmq::socket_t subscriber(context, ZMQ_SUB);
+
+    subscriber.connect("ipc://@camera");
+    subscriber.setsockopt(ZMQ_SUBSCRIBE, "", 0);
+
+    while (true)
+    {
+        // Receive the timestamp
+        zmq::message_t timestampMsg;
+        subscriber.recv(&timestampMsg);
+
+        // Receive the image
+        zmq::message_t imageMsg;
+        subscriber.recv(&imageMsg);
+
+        double timestamp = 0.0;
+        const uchar *metadata_ptr = static_cast<const uchar *>(timestampMsg.data());
+        std::memcpy(&timestamp, metadata_ptr, sizeof(double));
+
+        // Access the image data directly
+        uchar *imageData = imageMsg.data<uchar>();
+        size_t imageSize = imageMsg.size();
+
+        // Get current time_point
+        auto currentTimePoint = std::chrono::system_clock::now();
+
+        // Compute the difference in seconds
+        auto current = std::chrono::duration_cast<std::chrono::nanoseconds>(currentTimePoint.time_since_epoch()).count() / 1000000.0;
+        auto difference = current - timestamp * 1000.0;
+        std::cout << "timestamp = " << timestamp * 1000 << " ms" << std::endl;
+        std::cout << "current = " << current << " ms" << std::endl;
+        std::cout << "Latency = " << difference << " ms" << std::endl;
+
+        std::cout << "received" << std::endl;
+    }
+
+    return EXIT_SUCCESS;
 }
