@@ -24,15 +24,15 @@ while True:
     data_type = frame.dtype.itemsize
 
     ####### TRY webcam, 5MP and 100MP
-    # bytesStream = frame.tobytes()  # webcam
+    bytesStream = frame.tobytes()  # webcam
     # bytesStream = np.zeros((2592, 1944, 3), 'uint8').tobytes()  # 5MP
-    bytesStream = np.zeros((11608, 8708, 3), 'uint8').tobytes()  # 100MP
+    # bytesStream = np.zeros((11608, 8708, 3), 'uint8').tobytes()  # 100MP
     
     timestamp = time.time()  # assuming capture time ...
     metadata = struct.pack('<IIIId', rows, cols, nchannels, data_type, timestamp)  # lazyman serialization. Use protobuf, msgpack or rapidjson for production
     
     ###### TRY copy and no copy. TRY track and no track (careful of False and False)
-    tracker = socket.send_multipart([metadata, bytesStream], copy=False, track=True)
+    tracker = socket.send_multipart([metadata, bytesStream], copy=False, track=False)
     if tracker is not None:
         tracker.wait()
     new = time.time()
