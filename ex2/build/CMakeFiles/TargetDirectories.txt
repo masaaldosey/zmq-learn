@@ -1,3 +1,0 @@
-/home/ahmed.abouelela/github/zmq-learn/ex2/build/CMakeFiles/sub.dir
-/home/ahmed.abouelela/github/zmq-learn/ex2/build/CMakeFiles/edit_cache.dir
-/home/ahmed.abouelela/github/zmq-learn/ex2/build/CMakeFiles/rebuild_cache.dir

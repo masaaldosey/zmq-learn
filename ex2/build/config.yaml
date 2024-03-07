@@ -1,4 +1,0 @@
-# zmqEndPoint: inproc://@camera
-# zmqEndPoint: ipc://@camera
-zmqEndPoint: ipc:///tmp/camera
-# zmqEndPoint: tcp://127.0.0.1:5555
