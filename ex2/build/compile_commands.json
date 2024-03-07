@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/ahmed.abouelela/github/zmq-learn/ex2/build",
+  "command": "/usr/bin/g++ -DH5_BUILT_AS_STATIC_LIB -DYAML_CPP_STATIC_DEFINE -DZMQ_STATIC -isystem /home/ahmed.abouelela/vcpkg/installed/x64-linux/include -O3 -DNDEBUG -o CMakeFiles/sub.dir/sub.cpp.o -c /home/ahmed.abouelela/github/zmq-learn/ex2/sub.cpp",
+  "file": "/home/ahmed.abouelela/github/zmq-learn/ex2/sub.cpp"
+}
+]
