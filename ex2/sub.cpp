@@ -16,17 +16,19 @@ int main()
     zmq::context_t context(1);
 
     // Create a zmq socket
-    zmq::socket_t socket(context, ZMQ_SUB);
+    zmq::socket_t socket(context, ZMQ_REQ);
+    // zmq::socket_t socket(context, ZMQ_SUB);
 
     // Connect to the server
     socket.connect(zmqEndPoint);
-    socket.setsockopt(ZMQ_SUBSCRIBE, "", 0);
+    // socket.setsockopt(ZMQ_SUBSCRIBE, "", 0);
 
     int rows, cols, nchannels, data_type, data_size;
     double timestamp;
 
     while (true)
     {
+        socket.send(zmq::message_t(), zmq::send_flags::none);
 
         // Receive the metadata and image data through ZMQ
         zmq::message_t metadata_msg, image_msg;
@@ -45,15 +47,16 @@ int main()
         // Create a cv::Mat from the received data
         auto image = cv::Mat(rows, cols, nchannels == 3 ? CV_8UC3 : CV_8U, image_msg.data());
 
-        int queue_size = socket.get(zmq::sockopt::rcvhwm);
-        std::cout << "Current queue size: " << queue_size << std::endl;
+        // Uncomment the following lines to check the queue size
+        // int queue_size = socket.get(zmq::sockopt::rcvhwm);
+        // std::cout << "Current queue size: " << queue_size << std::endl;
 
         auto clock = std::chrono::duration_cast<std::chrono::nanoseconds>(current_time.time_since_epoch()).count() / 1000000.0;
         double latency = clock - timestamp * 1000.0;
 
         // Print the received metadata
-        std::cout << "Rows: " << rows << std::endl;
-        std::cout << "Cols: " << cols << std::endl;
+        std::cout << "Rows: " << image.rows << std::endl;
+        std::cout << "Cols: " << image.cols << std::endl;
         std::cout << "nchannels: " << nchannels << std::endl;
         std::cout << "Latency: " << latency << " ms" << std::endl;
         std::cout << "=============================" << std::endl;
