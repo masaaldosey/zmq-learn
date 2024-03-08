@@ -4,44 +4,26 @@
 cleanup() {
     echo "Terminating..."
     # Send termination signal to both background processes
-    kill $exec1_pid $exec2_pid $exec3_pid $exec4_pid $exec5_pid $exec6_pid 6>/dev/null
-    # kill $exec1_pid $exec2_pid $exec3_pid $exec4_pid $exec5_pid $exec6_pid $exec7_pid 7>/dev/null
+    for i in {1..10}
+    do
+        kill ${exec_pid[$i]} 9>/dev/null
+    done
     exit 1
 }
 
 # Trap SIGINT signal (Ctrl+C) to call the cleanup function
 trap cleanup SIGINT
 
+# Placeholder for the process IDs
+exec_pid = {}
 
-echo "Starting sub1"
-./build/sub &
-exec1_pid=$!
-
-echo "Starting sub2"
-./build/sub &
-exec2_pid=$!
-
-echo "Starting sub3"
-./build/sub &
-exec3_pid=$!
-
-echo "Starting sub4"
-./build/sub &
-exec4_pid=$!
-
-echo "Starting sub5"
-./build/sub &
-exec5_pid=$!
-
-
-echo "Starting sub6"
-./build/sub &
-exec6_pid=$!
-
-
-# echo "Starting sub7"
-# ./build/sub &
-# exec7_pid=$!
+# Launch loop to start the background processes
+for i in {1..10}
+do
+    echo "Starting sub$i"
+    ./build/sub &
+    exec_pid[$i]=$!
+done
 
 # Wait for a Ctrl+C signal
 echo "Press Ctrl+C to terminate the processes."
